@@ -76,7 +76,7 @@ const Footer = () => {
                 Legal
               </h2>
               <nav className="list-none">
-                <li><Link href="/politica-privacidad" className="text-xs text-gray-200 hover:text-[var(--accent-gold)] transition-colors duration-300">Política de Privacidad</Link></li>
+                <li><Link href="/politicas-privacidad" className="text-xs text-gray-200 hover:text-[var(--accent-gold)] transition-colors duration-300">Política de Privacidad</Link></li>
                 <li><Link href="/terminos-servicio" className="text-xs text-gray-200 hover:text-[var(--accent-gold)] transition-colors duration-300">Términos de Servicio</Link></li>
               </nav>
             </div>
