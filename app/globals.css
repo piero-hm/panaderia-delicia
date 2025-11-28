@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background-light: #FFF8F0; /* Soft, warm beige background */
+  --foreground-dark: #333333; /* Dark charcoal text */
+  --accent-gold: #DAA520; /* Goldenrod for accent, brighter */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background-dark: #2c2c2c; /* Dark background for dark mode */
+    --foreground-light: #e0e0e0; /* Light text for dark mode */
+    --accent-gold-dark: #d4af37; /* Gold for dark mode accent */
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-light);
+  color: var(--foreground-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--background-dark);
+    color: var(--foreground-light);
+  }
+}
+
+/* Custom styles for Header component */
+.hamburger-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+  position: absolute;
+  left: 0;
+}
+.hamburger-line.line-1 { top: 4px; }
+.hamburger-line.line-2 { top: 11px; }
+.hamburger-line.line-3 { top: 18px; }
+
+#hamburger-icon.open .hamburger-line.line-1 {
+  transform: translateY(7px) rotate(45deg);
+}
+#hamburger-icon.open .hamburger-line.line-2 {
+  opacity: 0;
+}
+#hamburger-icon.open .hamburger-line.line-3 {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.main-nav.navbar-hidden {
+  transform: translateY(-150%) translateX(-50%);
+  opacity: 0;
 }
