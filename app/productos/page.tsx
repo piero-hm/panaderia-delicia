@@ -4,7 +4,7 @@
 import React, { useState, useMemo, Suspense, useEffect } from 'react';
 import type { Product } from '@/types';
 import { getProducts } from '@/lib/queries';
-import ProductPageHero from '@/components/products/ProductPageHero';
+import ProductPageHero from '@/components/layout/ProductPageHero';
 import ProductSidebar from '@/components/products/ProductSidebar';
 import { SortOption } from '@/components/products/ProductSort';
 import ProductList from '@/components/products/ProductList';
@@ -56,7 +56,7 @@ const ProductsPageContent = ({ initialProducts }: { initialProducts: Product[] }
         });
         break;
     }
-    
+
     return filtered;
   }, [selectedCategory, sortOption, initialProducts]);
 
@@ -71,7 +71,7 @@ const ProductsPageContent = ({ initialProducts }: { initialProducts: Product[] }
   };
 
   return (
-    <>
+    <div className="bg-[#E2E2DD]">
       <ProductPageHero />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row gap-8">
         {/* Sidebar for Filters and Sort */}
@@ -88,7 +88,7 @@ const ProductsPageContent = ({ initialProducts }: { initialProducts: Product[] }
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Nuestra Selección</h2>
             <p className="text-gray-600">Hechos a mano, todos los días. Descubre tus favoritos.</p>
           </div>
-          
+
           {processedProducts.length === 0 ? (
             <div className="text-center py-16">
               <h3 className="text-xl font-semibold text-gray-800">No se encontraron productos</h3>
@@ -101,7 +101,7 @@ const ProductsPageContent = ({ initialProducts }: { initialProducts: Product[] }
       </div>
 
       <ProductQuickView product={quickViewProduct} isOpen={isQuickViewOpen} onClose={closeQuickView} />
-    </>
+    </div>
   );
 };
 

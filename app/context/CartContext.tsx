@@ -12,7 +12,7 @@ interface CartState {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: Product }
+  | { type: 'ADD_ITEM'; payload: { product: Product; quantity: number } }
   | { type: 'REMOVE_ITEM'; payload: { id: string } }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
@@ -25,22 +25,21 @@ const initialState: CartState = {
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const existingItem = state.items.find(item => item.product.id === action.payload.id);
+      const { product, quantity } = action.payload;
+      const existingItem = state.items.find(item => item.product.id === product.id);
       if (existingItem) {
         return {
           ...state,
           items: state.items.map(item =>
-            item.product.id === action.payload.id
-              ? { ...item, quantity: item.quantity + 1 }
+            item.product.id === product.id
+              ? { ...item, quantity: item.quantity + quantity }
               : item
           ),
         };
       }
-      // Note: The product object might not be complete here if it comes from a summary view.
-      // The server action will use the ID to get the definitive product data.
       return {
         ...state,
-        items: [...state.items, { id: crypto.randomUUID(), product: action.payload, quantity: 1 }],
+        items: [...state.items, { id: crypto.randomUUID(), product, quantity }],
       };
     }
     case 'REMOVE_ITEM': {
@@ -82,7 +81,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 interface CartContextType {
   state: CartState;
   isCheckingOut: boolean;
-  addItem: (product: Product) => void;
+  addItem: (product: Product, quantity: number) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -117,8 +116,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [state, isCheckingOut]);
 
-  const addItem = (product: Product) => {
-    dispatch({ type: 'ADD_ITEM', payload: product });
+  const addItem = (product: Product, quantity: number) => {
+    dispatch({ type: 'ADD_ITEM', payload: { product, quantity } });
   };
 
   const removeItem = (id: string) => {
@@ -147,9 +146,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         throw new Error(result.error || "Ocurrió un error desconocido al procesar tu pedido.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Checkout error:", error);
-      toast.error(`Error al procesar el pedido: ${error.message}`);
+      toast.error(`Error al procesar el pedido: ${error instanceof Error ? error.message : 'An unknown error occurred'}`);
     } finally {
       setIsCheckingOut(false);
     }

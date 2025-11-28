@@ -16,7 +16,7 @@ const Footer = () => {
               <span className="ml-3 text-lg font-semibold">Delicia Panadería</span>
             </Link>
             <p className="text-xs text-gray-200 px-4 md:px-0">
-              Panadería artesanal con pasión por el buen pan y la repostería.
+              En Panadería Delicia encontrarás tortas, pasteles y panes frescos, elaborados cada día con dedicación y un auténtico sabor casero.
             </p>
           </div>
 
@@ -39,7 +39,7 @@ const Footer = () => {
               Contacto
             </h2>
             <nav className="list-none mb-10">
-              <li><p className="text-gray-100 text-xs py-2">123 Calle Falsa, Springfield</p></li>
+              <li><p className="text-gray-100 text-xs py-2">Av San Carlos N° 123 <br />Huancayo, CP 12001</p></li>
               <li><p className="text-gray-100 text-xs py-2">Teléfono: (123) 456-7890</p></li>
               <li><p className="text-gray-100 text-xs py-2">Email: info@deliciapanaderia.com</p></li>
             </nav>
@@ -72,7 +72,7 @@ const Footer = () => {
               </a>
             </span>
             <div className="mt-8">
-              <h2 className="title-font font-medium text-[var(--foreground-dark)] tracking-widest text-sm mb-3">
+              <h2 className="title-font font-medium text-[#6366f1] tracking-widest text-sm mb-3">
                 Legal
               </h2>
               <nav className="list-none">

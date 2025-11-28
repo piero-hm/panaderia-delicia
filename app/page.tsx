@@ -16,7 +16,7 @@ const PassionSection = () => (
         <Image 
           className="object-cover object-center rounded-xl shadow-xl" 
           alt="Pan artesanal" 
-          src="/images/pan1.jpg"
+          src="/images/pasion-pan-artesanal.jpg"
           width={720}
           height={600}
         />
@@ -41,9 +41,9 @@ const PassionSection = () => (
 
 const TestimonialsSection = () => {
   const testimonials = [
-    { name: 'Ana Sofía', avatar: '/images/avatar-ana.jpg', text: '¡Los mejores croissants que he probado en la ciudad! Siempre frescos y deliciosos. Se nota el amor que le ponen.' },
-    { name: 'Juan Pérez', avatar: '/images/avatar-juan.jpg', text: 'El pan de centeno es espectacular. Perfecto para mis desayunos. La calidad es insuperable.' },
-    { name: 'María García', avatar: '/images/avatar-maria.jpg', text: 'Me encantan los postres, especialmente la torta de chocolate. ¡Mi familia y yo somos clientes fieles!' },
+    { name: 'Ana Sofía', avatar: '/images/testimonio-ana-sofia.jpg', text: '¡Los mejores croissants que he probado en la ciudad! Siempre frescos y deliciosos. Se nota el amor que le ponen.' },
+    { name: 'Juan Pérez', avatar: '/images/testimonio-juan-perez.jpg', text: 'El pan de centeno es espectacular. Perfecto para mis desayunos. La calidad es insuperable.' },
+    { name: 'María García', avatar: '/images/testimonio-maria-garcia.jpg', text: 'Me encantan los postres, especialmente la torta de chocolate. ¡Mi familia y yo somos clientes fieles!' },
   ];
 
   return (

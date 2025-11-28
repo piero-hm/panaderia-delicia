@@ -60,8 +60,8 @@ export const getFeaturedProducts = async (category?: string, sortBy?: SortBy): P
   return featuredProducts;
 };
 
-export const getProductById = async (id: number): Promise<Product | undefined> => {
-  const foundProduct = products.find(p => p.id === id.toString());
+export const getProductById = async (id: string): Promise<Product | undefined> => {
+  const foundProduct = products.find(p => p.id === id);
   return Promise.resolve(foundProduct);
 };
 

@@ -7,7 +7,7 @@ const Hero = () => {
   return (
     <section className="relative h-[70vh] text-white flex items-center justify-center"> {/* Increased height and centered content */}
       <Image
-        src="/images/panaderia-banner-large.jpg"
+        src="/images/hero-home-principal.jpg"
         alt="Banner de la panadería mostrando una variedad de panes"
         layout="fill"
         objectFit="cover"

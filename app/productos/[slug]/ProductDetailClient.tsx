@@ -23,12 +23,12 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ product }) =>
     if (product) {
       addItem(product, quantity);
       toast.success(`${quantity} x ${product.name} añadido(s) al carrito!`);
-      
+
     }
   };
 
   return (
-    <section className="text-gray-800 body-font overflow-hidden bg-white">
+    <section className="text-gray-800 body-font overflow-hidden bg-white mt-21">
       <div className="container px-5 py-8 mx-auto"> {/* Reduced vertical padding */}
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           {/* Product Image */}
@@ -47,7 +47,7 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ product }) =>
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
             <h2 className="text-sm title-font text-gray-500 tracking-widest uppercase mb-1">{product.category_id}</h2>
             <h1 className="text-gray-900 text-4xl title-font font-bold mb-3">{product.name}</h1> {/* Adjusted margin */}
-            
+
             {/* Price */}
             <div className="flex items-baseline mb-4">
               {product.discount_price ? (
@@ -113,7 +113,7 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ product }) =>
                 </button>
               </div>
             </div>
-             <p className="text-sm text-gray-500 mt-3">Stock disponible: {product.stock}</p> {/* Ensured text-sm */}
+            <p className="text-sm text-gray-500 mt-3">Stock disponible: {product.stock}</p> {/* Ensured text-sm */}
           </div>
         </div>
       </div>

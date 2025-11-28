@@ -25,7 +25,7 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="text-[var(--foreground-dark)] body-font relative bg-gray-50 py-16 md:py-24">
+    <section className="text-[var(--foreground-dark)] body-font relative bg-gray-100 py-16 md:py-24">
       <div className="container px-5 mx-auto flex sm:flex-nowrap flex-wrap">
         <div className="lg:w-2/3 md:w-1/2 bg-white rounded-lg shadow-lg p-8 flex flex-col md:ml-auto w-full mt-8 md:mt-0 relative z-10">
           <h2 className="text-[var(--foreground-dark)] text-lg mb-1 font-medium title-font">Envíanos un Mensaje</h2>

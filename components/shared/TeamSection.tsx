@@ -8,19 +8,19 @@ const TeamSection = () => {
       name: 'Chef Ana García',
       role: 'Maestra Panadera',
       description: 'Con más de 20 años de experiencia, Ana es el corazón de nuestra panadería, fusionando tradición y creatividad en cada receta.',
-      image: '/images/avatar-ana.jpg',
+      image: '/images/equipo-chef-ana-garcia.jpg',
     },
     {
       name: 'Chef Juan Pérez',
       role: 'Especialista en Repostería',
       description: 'Juan es nuestro experto en dulces, creando postres que no solo deleitan el paladar, sino que también son obras de arte.',
-      image: '/images/avatar-juan.jpg',
+      image: '/images/equipo-chef-juan-perez.jpg',
     },
     {
       name: 'María Rodríguez',
       role: 'Gerente de Operaciones',
       description: 'María asegura que cada día la panadería funcione a la perfección, desde la selección de ingredientes hasta la atención al cliente.',
-      image: '/images/avatar-maria.jpg',
+      image: '/images/equipo-maria-rodriguez.jpg',
     },
   ];
 

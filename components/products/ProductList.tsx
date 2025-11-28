@@ -9,7 +9,7 @@ import FeaturedProductCarousel from './FeaturedProductCarousel'; // Import the c
 interface ProductListProps {
   products: Product[];
   isCarousel?: boolean; // Add isCarousel prop
-  onQuickView: (product: Product) => void; // New prop
+  onQuickView?: (product: Product) => void; // New prop, now optional
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products, isCarousel = false, onQuickView }) => {

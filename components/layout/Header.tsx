@@ -67,9 +67,8 @@ const Header: React.FC<HeaderProps> = ({ brand, links }) => {
     <>
       <nav
         id="main-nav"
-        className={`main-nav fixed left-1/2 top-6 z-40 -translate-x-1/2 w-[92%] max-w-6xl rounded-3xl bg-gradient-to-r from-slate-900/60 via-slate-800/40 to-slate-900/60 backdrop-blur-md border border-slate-700/30 shadow-2xl transition-all duration-500 ease-in-out will-change-transform ${
-          isNavbarHidden ? 'navbar-hidden' : ''
-        }`}
+        className={`main-nav fixed left-1/2 top-6 z-40 -translate-x-1/2 w-[92%] max-w-6xl rounded-3xl bg-gradient-to-r from-slate-900/60 via-slate-800/40 to-slate-900/60 backdrop-blur-md border border-slate-700/30 shadow-2xl transition-all duration-500 ease-in-out will-change-transform ${isNavbarHidden ? 'navbar-hidden' : ''
+          }`}
         role="navigation"
       >
         <div className="flex items-center justify-between h-14 px-4">
@@ -80,11 +79,11 @@ const Header: React.FC<HeaderProps> = ({ brand, links }) => {
               className="flex items-center gap-3 no-underline focus:outline-none focus:ring-2 focus:ring-emerald-300 rounded-md"
             >
               <Image
-                src="/images/logito.jpg"
+                src="/images/logo-delicia-small.png"
                 alt="Logo de la marca"
                 width={40}
                 height={40}
-                className="w-10 h-10 rounded-lg object-cover shadow-sm"
+                className="w-10 h-10 rounded-full object-cover shadow-sm"
               />
               <span className="font-semibold text-base text-slate-50 tracking-tight">{brand}</span>
             </Link>
@@ -97,9 +96,8 @@ const Header: React.FC<HeaderProps> = ({ brand, links }) => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`group relative text-sm transition-all duration-200 outline-none ${
-                    link.active ? 'text-white font-semibold' : 'text-slate-300 hover:text-white'
-                  }`}
+                  className={`group relative text-sm transition-all duration-200 outline-none ${link.active ? 'text-white font-semibold' : 'text-slate-300 hover:text-white'
+                    }`}
                   data-index={i}
                   aria-current={link.active ? 'page' : undefined}
                 >
@@ -205,9 +203,8 @@ const Header: React.FC<HeaderProps> = ({ brand, links }) => {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 ${
-                  link.active ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 ${link.active ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
                 aria-current={link.active ? 'page' : undefined}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

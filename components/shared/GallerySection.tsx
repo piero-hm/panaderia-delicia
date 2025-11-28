@@ -4,12 +4,12 @@ import Image from 'next/image';
 
 const GallerySection = () => {
   const galleryImages = [
-    { src: '/images/panaderia-banner-small.jpg', alt: 'Interior de la panadería' },
-    { src: '/images/pan1.jpg', alt: 'Panes recién horneados' },
-    { src: '/images/postre1.jpg', alt: 'Variedad de postres' },
-    { src: '/images/torta1.jpg', alt: 'Torta decorada' },
-    { src: '/images/panaderia-banner-medium.jpg', alt: 'Mostrador de la panadería' },
-    { src: '/images/pan-centeno-nueces.jpg', alt: 'Pan de centeno y nueces' },
+    { src: '/images/galeria-interior-panaderia.jpg', alt: 'Interior de la panadería' },
+    { src: '/images/galeria-panes-recien-horneados.jpg', alt: 'Panes recién horneados' },
+    { src: '/images/galeria-variedad-postres.jpg', alt: 'Variedad de postres' },
+    { src: '/images/galeria-torta-decorada.jpg', alt: 'Torta decorada' },
+    { src: '/images/galeria-mostrador-panaderia.jpg', alt: 'Mostrador de la panadería' },
+    { src: '/images/galeria-pan-centeno-nueces.jpg', alt: 'Pan de centeno y nueces' },
   ];
 
   return (

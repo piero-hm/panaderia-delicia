@@ -9,7 +9,7 @@ const ContactInfoMap = () => {
         {/* Map Placeholder */}
         <div className="lg:w-2/3 md:w-1/2 bg-gray-300 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
           <Image
-            src="/images/panaderia-map.jpg" // Placeholder map image
+            src="/images/mapa-ubicacion-panaderia.jpg" // Placeholder map image
             alt="Ubicación de Delicia Panadería en el mapa"
             layout="fill"
             objectFit="cover"
@@ -18,7 +18,7 @@ const ContactInfoMap = () => {
           <div className="bg-white relative flex flex-wrap py-6 rounded shadow-md z-10">
             <div className="lg:w-1/2 px-6">
               <h2 className="title-font font-semibold text-[var(--foreground-dark)] tracking-widest text-xs">DIRECCIÓN</h2>
-              <p className="mt-1 text-gray-700">123 Calle Falsa <br />Springfield, CP 12345</p>
+              <p className="mt-1 text-gray-700">Av San Carlos N° 123 <br />Huancayo, CP 12001</p>
             </div>
             <div className="lg:w-1/2 px-6 mt-4 lg:mt-0">
               <h2 className="title-font font-semibold text-[var(--foreground-dark)] tracking-widest text-xs">EMAIL</h2>

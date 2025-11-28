@@ -19,7 +19,7 @@ const AboutPage = () => {
             <Image 
               className="object-cover object-center rounded-xl shadow-xl" 
               alt="Panadero amasando masa" 
-              src="/images/panaderia-map.jpg" // Using an existing image as placeholder
+              src="/images/historia-panadero-amasando.jpg" // Using an existing image as placeholder
               width={720}
               height={600}
             />

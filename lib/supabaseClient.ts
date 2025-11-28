@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 // Leer las variables de entorno
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -10,8 +10,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Crear y exportar el cliente de Supabase
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createBrowserClient(
+  supabaseUrl,
+  supabaseAnonKey
+);
 
 // Este es un cliente para usar en el lado del cliente (client components).
 // Para operaciones en el servidor (server components, actions, route handlers),
-// se debe usar `createServerClient` de `@supabase/ssr` como se muestra en la documentación de Next.js.
+// se debe usar `createServerClient` de `@supabase/auth-helpers-nextjs` como se muestra en la documentación de Next.js.

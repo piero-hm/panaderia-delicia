@@ -55,7 +55,7 @@ const CartPage = () => {
               <div key={item.id} className="flex flex-col sm:flex-row items-center border-b border-gray-200 last:border-b-0 py-4">
                 <div className="w-full sm:w-1/4 flex-shrink-0 mb-4 sm:mb-0">
                   <Image
-                    src={item.product.image_src || '/images/placeholder-pan-integral.jpg'}
+                    src={item.product.image_src || '/images/producto-placeholder-default.jpg'}
                     alt={item.product.image_alt || item.product.name}
                     width={120}
                     height={120}
