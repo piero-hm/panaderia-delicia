@@ -3,7 +3,7 @@
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Inter } from "next/font/google";
+import { Inter, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/app/context/CartContext";
 import { AuthProvider } from "@/app/context/AuthContext";
@@ -12,7 +12,8 @@ import Footer from "@/components/layout/Footer";
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation'; // Import usePathname
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+const dancingScript = Dancing_Script({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-dancing-script' });
 
 // Metadata is a Server Component export, so it cannot be in a 'use client' file.
 // Moving it outside or making it a separate file is an option, but for now,
@@ -56,7 +57,7 @@ export default function RootLayout({
 
   return (
     <html lang="es">
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${dancingScript.variable} font-sans`}>
         <AuthProvider>
           <CartProvider>
             <div className="flex flex-col min-h-screen">

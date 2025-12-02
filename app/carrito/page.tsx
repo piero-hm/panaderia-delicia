@@ -1,158 +1,148 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '@/app/context/CartContext';
-import { useAuth } from '@/app/context/AuthContext';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
+import Confetti from 'react-confetti';
+import { motion } from 'framer-motion';
+import { PlusIcon, MinusIcon, XMarkIcon, ShoppingBagIcon, ArrowRightIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { useRouter } from 'next/navigation'; // Importamos useRouter
 
-const CartPage = () => {
-  const { state, removeItem, updateQuantity, clearCart, checkout, isCheckingOut } = useCart();
-  const { user } = useAuth();
-  const router = useRouter();
-  const { items } = state;
+// Hook para obtener el tamaño de la ventana
+const useWindowSize = () => {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  useEffect(() => {
+    const handleResize = () => setSize({ width: window.innerWidth, height: window.innerHeight });
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return size;
+};
 
-  const handleCheckout = () => {
-    if (!user) {
-      toast.info('Debes iniciar sesión para realizar la compra.');
-      router.push('/auth/signin');
-    } else {
-      checkout();
+// Variantes de animación para la lista
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.07 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0 },
+};
+
+export default function CartPage() {
+  const { state, isCheckingOut, updateQuantity, removeItem, checkout, clearCart } = useCart();
+  const { width, height } = useWindowSize();
+  const [showConfetti, setShowConfetti] = useState(false);
+  const router = useRouter(); // Inicializamos useRouter
+
+  const subtotal = state.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const totalDiscount = state.items.reduce((sum, item) => {
+    const discount = item.product.price - (item.product.discount_price || item.product.price);
+    return sum + discount * item.quantity;
+  }, 0);
+  const total = subtotal - totalDiscount;
+
+  const handleCheckout = async () => {
+    const result = await checkout();
+    if (result?.redirect) {
+      router.push(result.redirect); // Redirigir si se recibe la señal
+      return;
+    }
+    if (result?.success) {
+      toast.success("¡Pedido realizado con éxito!");
+      setShowConfetti(true);
+      setTimeout(() => {
+        setShowConfetti(false);
+        clearCart();
+      }, 6000);
+    } else if (result?.error) {
+      toast.error(`Error al procesar el pedido: ${result.error}`);
     }
   };
 
-  const calculateSubtotal = () => {
-    return items.reduce((total, item) => {
-      const priceToUse = item.product.discount_price || item.product.price;
-      return total + priceToUse * item.quantity;
-    }, 0);
+  const handleClearCart = () => {
+    if (window.confirm('¿Estás seguro de que quieres vaciar tu carrito?')) {
+      clearCart();
+      toast.info('Tu carrito ha sido vaciado.');
+    }
   };
 
-  if (items.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-16 md:py-24 text-center bg-[var(--background-light)] min-h-[60vh] flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold mb-4 text-[var(--foreground-dark)]">Tu Carrito Está Vacío</h1>
-        <p className="text-lg text-gray-700 mb-8">Parece que aún no has añadido nada a tu carrito. ¡Explora nuestras delicias!</p>
-        <Link href="/productos" className="inline-flex text-white bg-[var(--accent-gold)] border-0 py-3 px-8 focus:outline-none hover:bg-opacity-90 rounded-full text-lg transition-colors duration-300 shadow-lg">
-          Ver Productos
-        </Link>
-      </div>
-    );
-  }
-
+  // El layout principal ahora envuelve todo para tener un fondo consistente
   return (
-    <div className="container mx-auto px-4 py-12 bg-[var(--background-light)]">
-      <h1 className="text-4xl font-bold text-center mb-10 text-[var(--foreground-dark)]">Tu Carrito de Compras</h1>
+    <div className="bg-[#FDFBF7] min-h-screen">
+      {showConfetti && <Confetti width={width} height={height} recycle={false} numberOfPieces={500} gravity={0.15} />}
+      
+      {state.items.length === 0 ? (
+        // --- VISTA DE CARRITO VACÍO (CORREGIDA) ---
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24 container mx-auto flex flex-col items-center min-h-[60vh] justify-center">
+          <ShoppingBagIcon className="mx-auto h-24 w-24 text-gray-300" />
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Tu carrito está vacío</h1>
+          <p className="mt-4 text-lg text-gray-600">Parece que aún no has añadido nada. ¡Explora nuestros productos!</p>
+          <Link href="/productos" className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[var(--accent-gold)] px-6 py-3 font-semibold text-white shadow-lg transition-transform hover:scale-105">
+            Ver Productos <ArrowRightIcon className="h-5 w-5" />
+          </Link>
+        </motion.div>
+      ) : (
+        // --- VISTA DE CARRITO LLENO ---
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center mb-12">
+            <h1 className="font-signature text-6xl text-[var(--accent-gold)]">Mi Carrito</h1>
+            <p className="mt-2 text-xl text-gray-600">Revisa tu selección y prepárate para disfrutar.</p>
+          </motion.div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Cart Items List */}
-        <div className="lg:w-2/3">
-          <div className="bg-white shadow-lg rounded-lg p-6">
-            {items.map((item) => (
-              <div key={item.id} className="flex flex-col sm:flex-row items-center border-b border-gray-200 last:border-b-0 py-4">
-                <div className="w-full sm:w-1/4 flex-shrink-0 mb-4 sm:mb-0">
-                  <Image
-                    src={item.product.image_src || '/images/producto-placeholder-default.jpg'}
-                    alt={item.product.image_alt || item.product.name}
-                    width={120}
-                    height={120}
-                    className="rounded-lg shadow-md w-full h-auto sm:w-24 sm:h-24 object-cover"
-                  />
-                </div>
-                <div className="flex-grow text-center sm:text-left sm:ml-4">
-                  <h2 className="text-xl font-semibold text-[var(--foreground-dark)] mb-1">{item.product.name}</h2>
-                  <div className="flex items-center justify-center sm:justify-start mb-2">
-                    {item.product.discount_price ? (
-                      <>
-                        <p className="text-lg font-bold text-red-600 mr-2">S/ {item.product.discount_price.toFixed(2)}</p>
-                        <p className="text-sm text-gray-500 line-through">S/ {item.product.price.toFixed(2)}</p>
-                      </>
-                    ) : (
-                      <p className="text-lg font-bold text-[var(--foreground-dark)]">S/ {item.product.price.toFixed(2)}</p>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
-                  <p className="text-lg font-bold text-[var(--accent-gold)] mt-1">
-                    Subtotal: S/ {((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
-                  </p>
-                </div>
-                <div className="flex flex-col items-center justify-center sm:justify-end mt-4 sm:mt-0 sm:w-1/4">
-                  <div className="flex items-center border border-gray-300 rounded-md mb-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      disabled={item.quantity <= 1 || isCheckingOut}
-                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-l-md disabled:opacity-50"
-                    >
-                      -
-                    </button>
-                    <span className="px-4 py-2 text-[var(--foreground-dark)]">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      disabled={item.quantity >= item.product.stock || isCheckingOut}
-                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-r-md disabled:opacity-50"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    disabled={isCheckingOut}
-                    className="text-red-600 hover:text-red-800 transition-colors duration-200 p-2 rounded-md disabled:opacity-50"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-12">
+            <motion.section variants={containerVariants} initial="hidden" animate="visible" className="lg:col-span-2">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Tus Productos</h2>
+                <button onClick={handleClearCart} className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-red-600 transition-colors">
+                  <TrashIcon className="h-5 w-5" />
+                  Vaciar Carrito
+                </button>
               </div>
-            ))}
-          </div>
-        </div>
+              <div className="space-y-6">
+                {state.items.map(item => (
+                  <motion.div variants={itemVariants} key={item.id} className="flex items-center gap-6 bg-white p-4 rounded-xl shadow-md border border-gray-100">
+                    <Image src={item.product.image_src} alt={item.product.name} width={100} height={100} className="rounded-lg object-cover" />
+                    <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                      <div className="md:col-span-1">
+                        <h3 className="font-semibold text-lg text-gray-800">{item.product.name}</h3>
+                        <p className="text-sm text-gray-500">S/ {(item.product.discount_price || item.product.price).toFixed(2)}</p>
+                      </div>
+                      <div className="flex items-center gap-3 justify-start md:justify-center">
+                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"><MinusIcon className="h-4 w-4 text-gray-600" /></button>
+                        <span className="font-bold text-lg w-8 text-center">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"><PlusIcon className="h-4 w-4 text-gray-600" /></button>
+                      </div>
+                      <div className="font-bold text-lg text-right text-gray-800">S/ {((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}</div>
+                    </div>
+                    <button onClick={() => removeItem(item.id)} className="ml-4 text-gray-400 hover:text-red-600 transition-colors"><XMarkIcon className="h-6 w-6" /></button>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
 
-        {/* Order Summary */}
-        <div className="lg:w-1/3 mt-8 lg:mt-0">
-          <div className="bg-white shadow-lg rounded-lg p-6 sticky top-24">
-            <h2 className="text-2xl font-bold text-[var(--foreground-dark)] mb-4">Resumen del Pedido</h2>
-            <div className="flex justify-between mb-2">
-              <span className="text-gray-700">Subtotal:</span>
-              <span className="font-semibold text-[var(--foreground-dark)]">S/ {calculateSubtotal().toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between mb-4 border-t border-gray-200 pt-4 mt-4">
-              <span className="text-xl font-bold text-[var(--foreground-dark)]">Total:</span>
-              <span className="text-xl font-bold text-[var(--accent-gold)]">S/ {calculateSubtotal().toFixed(2)}</span>
-            </div>
-            <button
-              onClick={handleCheckout}
-              disabled={isCheckingOut}
-              className="w-full bg-[var(--accent-gold)] hover:bg-opacity-90 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
-            >
-              {isCheckingOut ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Procesando...
-                </>
-              ) : (
-                'Proceder al Pago'
-              )}
-            </button>
-            <button
-              onClick={clearCart}
-              disabled={isCheckingOut}
-              className="w-full mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              Vaciar Carrito
-            </button>
+            <aside className="lg:col-span-1">
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="sticky top-24 bg-white p-8 rounded-xl shadow-xl border border-gray-100">
+                <h2 className="text-2xl font-bold border-b-2 border-gray-100 pb-4 mb-4">Resumen del Pedido</h2>
+                <div className="space-y-4 text-gray-700">
+                  <div className="flex justify-between"><span>Subtotal</span><span>S/ {subtotal.toFixed(2)}</span></div>
+                  {totalDiscount > 0 && <div className="flex justify-between text-green-600"><span>Descuentos</span><span>- S/ {totalDiscount.toFixed(2)}</span></div>}
+                  <div className="flex justify-between text-xl font-bold text-gray-900 border-t-2 border-gray-100 pt-4 mt-4"><span>Total</span><span>S/ {total.toFixed(2)}</span></div>
+                </div>
+                <button onClick={handleCheckout} disabled={isCheckingOut} className="mt-8 w-full rounded-lg bg-[var(--accent-gold)] px-8 py-4 font-bold text-lg text-white shadow-lg shadow-amber-500/20 transition-all hover:scale-105 hover:shadow-amber-500/40 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none">
+                  {isCheckingOut ? 'Procesando...' : 'Realizar Pedido'}
+                </button>
+              </motion.div>
+            </aside>
           </div>
-        </div>
-      </div>
+        </main>
+      )}
     </div>
   );
-};
+}
 
-export default CartPage;

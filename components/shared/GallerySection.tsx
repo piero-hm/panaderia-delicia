@@ -1,47 +1,62 @@
-// components/shared/GallerySection.tsx
-import React from 'react';
+'use client';
+
 import Image from 'next/image';
+import { FadeIn } from './FadeIn';
+import { FadeInStagger } from './FadeInStagger';
 
-const GallerySection = () => {
-  const galleryImages = [
-    { src: '/images/galeria-interior-panaderia.jpg', alt: 'Interior de la panadería' },
-    { src: '/images/galeria-panes-recien-horneados.jpg', alt: 'Panes recién horneados' },
-    { src: '/images/galeria-variedad-postres.jpg', alt: 'Variedad de postres' },
-    { src: '/images/galeria-torta-decorada.jpg', alt: 'Torta decorada' },
-    { src: '/images/galeria-mostrador-panaderia.jpg', alt: 'Mostrador de la panadería' },
-    { src: '/images/galeria-pan-centeno-nueces.jpg', alt: 'Pan de centeno y nueces' },
-  ];
+// Definimos el tipo para cada imagen de la galería
+interface GalleryImage {
+  src: string;
+  alt: string;
+  title: string;
+}
 
+interface GallerySectionProps {
+  images: GalleryImage[];
+}
+
+const GallerySection = ({ images }: GallerySectionProps) => {
   return (
-    <section className="text-[var(--foreground-dark)] body-font bg-[var(--background-light)] py-16 md:py-24">
-      <div className="container px-5 mx-auto">
-        <div className="flex flex-col text-center w-full mb-16">
-          <h1 className="sm:text-4xl text-3xl font-bold title-font mb-4 text-[var(--foreground-dark)]">Nuestra Galería</h1>
-          <p className="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-700">
-            Un vistazo a nuestro mundo, donde la pasión por la panadería cobra vida.
+    <div className="bg-white py-16 sm:py-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="font-signature text-5xl text-[var(--accent-gold)]">Nuestra Galería</h2>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Momentos Horneados a la Perfección</p>
+          <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-gray-600">
+            Un vistazo a nuestro mundo, desde el interior de nuestra cocina hasta las sonrisas de nuestros clientes.
           </p>
-          <div className="flex mt-6 justify-center">
-            <div className="w-16 h-1 rounded-full bg-[var(--accent-gold)] inline-flex"></div>
-          </div>
         </div>
-        <div className="flex flex-wrap -m-1 md:-m-2">
-          {galleryImages.map((img, index) => (
-            <div key={index} className="flex flex-wrap w-1/2 md:w-1/3 p-1 md:p-2">
-              <div className="w-full h-64 overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+
+        {/* Usamos el contenedor de animación escalonada */}
+        <FadeInStagger className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {images.map((image) => (
+            // Cada imagen es un hijo que se anima individualmente
+            <FadeIn key={image.src}>
+              <div className="group relative h-72 w-full overflow-hidden rounded-lg shadow-lg">
                 <Image
-                  alt={img.alt}
-                  className="block object-cover object-center w-full h-full transform hover:scale-105 transition-transform duration-300"
-                  src={img.src}
-                  width={500} // Adjust width and height as needed for Image component
-                  height={500}
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                  sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 />
+                {/* Capa de superposición */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                
+                {/* Texto que aparece al hacer hover */}
+                <div className="absolute inset-0 flex items-end p-4">
+                  <div className="text-white w-full transform translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                    <h3 className="text-lg font-bold">{image.title}</h3>
+                  </div>
+                </div>
               </div>
-            </div>
+            </FadeIn>
           ))}
-        </div>
+        </FadeInStagger>
       </div>
-    </section>
+    </div>
   );
 };
 
 export default GallerySection;
+

@@ -85,7 +85,7 @@ interface CartContextType {
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
-  checkout: () => Promise<void>;
+  checkout: () => Promise<{ success: boolean; error?: string; redirect?: string }>; // Tipo de retorno corregido
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -135,20 +135,25 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkout = async () => {
     if (state.items.length === 0) {
       toast.info("Tu carrito está vacío.");
-      return;
+      return { success: false, error: "Cart is empty" };
     }
     setIsCheckingOut(true);
     try {
       const result = await createOrder(state.items);
       if (result.success) {
-        toast.success("¡Gracias por tu compra! Tu pedido ha sido realizado con éxito.");
-        clearCart();
+        return { success: true };
       } else {
+        // Si el error es por falta de autenticación, devolvemos una señal de redirección
+        if (result.error === 'Debes iniciar sesión para crear un pedido.') {
+          return { success: false, error: result.error, redirect: '/auth/signin' };
+        }
         throw new Error(result.error || "Ocurrió un error desconocido al procesar tu pedido.");
       }
     } catch (error: unknown) {
       console.error("Checkout error:", error);
-      toast.error(`Error al procesar el pedido: ${error instanceof Error ? error.message : 'An unknown error occurred'}`);
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      toast.error(`Error al procesar el pedido: ${errorMessage}`);
+      return { success: false, error: errorMessage };
     } finally {
       setIsCheckingOut(false);
     }

@@ -33,14 +33,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   };
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg">
+    <div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
       <Link href={`/productos/${product.slug}`} className="block">
         <div className="relative w-full h-48 bg-gray-100 overflow-hidden"> {/* Simplified image container */}
           <Image
             src={product.image_src}
             alt={product.image_alt || ''}
             fill
-            className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+            className="object-cover object-center transition-transform duration-500 ease-in-out group-hover:scale-110"
             sizes="(min-width: 1024px) 20vw, (min-width: 768px) 30vw, 90vw"
             priority={true} // Added priority for better loading
           />
