@@ -1,5 +1,5 @@
 import React from 'react';
-import { getProductBySlug, getProducts } from '@/lib/queries';
+import { getProductBySlug, createSupabaseBuildClient } from '@/lib/queries'; // Import createSupabaseBuildClient
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
 import type { Metadata } from 'next';
@@ -41,7 +41,14 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
 // Generate static paths at build time
 export async function generateStaticParams() {
-  const products = await getProducts();
+  const supabase = createSupabaseBuildClient(); // Use the build client
+  const { data: products, error } = await supabase.from('products').select('slug');
+
+  if (error) {
+    console.error('Error fetching product slugs for generateStaticParams:', error);
+    return []; // Return empty array on error
+  }
+
   return products.map((product) => ({
     slug: product.slug,
   }));

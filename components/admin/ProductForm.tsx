@@ -2,13 +2,15 @@
 "use client";
 
 import { useActionState } from "react";
-import { Product } from "@/types";
+import { Product, Category } from "@/types";
 import { SubmitButton } from "./SubmitButton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react"; // Importar useState
+import Image from "next/image"; // Importar Image de Next.js
 
 interface ProductFormProps {
   action: (prevState: { message: string }, formData: FormData) => Promise<{ message: string }>;
   initialData?: Product | null;
+  categories: Category[]; // <--- Añadido
 }
 
 const initialState = { message: "" };
@@ -17,18 +19,39 @@ const initialState = { message: "" };
  * Formulario para crear o editar un producto.
  * Utiliza una Server Action para procesar los datos.
  */
-export default function ProductForm({ action, initialData }: ProductFormProps) {
+export default function ProductForm({ action, initialData, categories }: ProductFormProps) { // <--- Añadido categories
   const [state, formAction] = useActionState(action, initialState);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null); // Estado para la previsualización
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null); // Estado para el archivo seleccionado
 
   useEffect(() => {
     if (state?.message.includes("Éxito")) {
-      // Podrías mostrar un toast o una notificación aquí
       console.log(state.message);
+      // Si es un nuevo producto y se creó con éxito, limpiar la previsualización
+      if (!initialData) {
+        setImagePreviewUrl(null);
+        setSelectedImageFile(null);
+      }
     } else if (state?.message.includes("Error")) {
-      // Podrías mostrar un toast de error
       console.error(state.message);
     }
-  }, [state]);
+  }, [state, initialData]);
+
+  // Función para manejar el cambio de imagen
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setSelectedImageFile(null);
+      setImagePreviewUrl(null);
+    }
+  };
 
 
   const inputClasses = "mt-2 block w-full rounded-lg border-gray-700 bg-gray-900 text-gray-200 shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-500 focus:ring-opacity-50";
@@ -59,6 +82,27 @@ export default function ProductForm({ action, initialData }: ProductFormProps) {
         />
       </div>
 
+      {/* Selector de Categoría Añadido */}
+      <div>
+        <label htmlFor="categoryId" className={labelClasses}>
+          Categoría
+        </label>
+        <select
+          id="categoryId"
+          name="categoryId"
+          defaultValue={initialData?.category_id ?? ""}
+          required
+          className={inputClasses}
+        >
+          <option value="" disabled>Selecciona una categoría</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div>
         <label htmlFor="description" className={labelClasses}>
           Descripción
@@ -70,6 +114,33 @@ export default function ProductForm({ action, initialData }: ProductFormProps) {
           defaultValue={initialData?.description ?? ""}
           className={inputClasses}
         ></textarea>
+      </div>
+
+      {/* Campo de Subida de Imagen */}
+      <div>
+        <label htmlFor="image" className={labelClasses}>
+          Imagen del Producto
+        </label>
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          className={`${inputClasses} file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100`}
+          onChange={handleImageChange}
+        />
+        {(imagePreviewUrl || initialData?.image_src) && (
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-300 mb-2">Previsualización:</p>
+            <Image
+              src={imagePreviewUrl || initialData?.image_src || '/images/producto-placeholder-default.jpg'}
+              alt="Previsualización del producto"
+              width={200}
+              height={200}
+              className="rounded-lg object-cover border border-gray-700"
+            />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">

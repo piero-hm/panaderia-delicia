@@ -25,8 +25,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state change event:', event, 'session:', session);
       if (session?.user) {
-        setUser(session.user);
-        console.log('User set:', session.user);
+        // Usar supabase.auth.getUser() para obtener un objeto de usuario autenticado
+        const { data: { user: authenticatedUser }, error } = await supabase.auth.getUser();
+        if (error) {
+          console.error('Error fetching authenticated user:', error);
+          setUser(null);
+        } else {
+          setUser(authenticatedUser);
+          console.log('User set (authenticated):', authenticatedUser);
+        }
       } else {
         setUser(null);
         console.log('User set to null');

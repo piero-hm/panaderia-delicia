@@ -51,7 +51,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
           )}
         </div>
         <div className="flex flex-1 flex-col space-y-2 p-4">
-          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">{product.category_id}</h3>
+          <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+            {product.categories ? product.categories.name : 'Sin Categoría'}
+          </h3>
           <h2 className="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors leading-tight"> {/* Reduced font size */}
             {product.name}
           </h2>

@@ -45,7 +45,9 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ product }) =>
 
           {/* Product Details */}
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-            <h2 className="text-sm title-font text-gray-500 tracking-widest uppercase mb-1">{product.category_id}</h2>
+            <h2 className="text-sm title-font text-gray-500 tracking-widest uppercase mb-1">
+              {product.categories ? product.categories.name : 'Sin Categoría'}
+            </h2>
             <h1 className="text-gray-900 text-4xl title-font font-bold mb-3">{product.name}</h1> {/* Adjusted margin */}
 
             {/* Price */}

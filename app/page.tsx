@@ -21,6 +21,7 @@ const PassionSection = () => (
           src="/images/pasion-pan-artesanal.jpg"
           width={720}
           height={600}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </FadeIn>
       {/* CORREGIDO: Clases de layout movidas al componente FadeIn */}
@@ -70,6 +71,7 @@ const TestimonialsSection = () => {
                   src={testimonial.avatar}
                   width={96}
                   height={96}
+                  sizes="96px"
                 />
                 <p className="leading-relaxed text-gray-700 text-base italic mb-4">{testimonial.text}</p>
                 <span className="inline-block h-1 w-10 rounded bg-[var(--accent-gold)] mt-4 mb-4"></span>

@@ -24,15 +24,11 @@ const createSupabaseServerComponentClient = async () => {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options?: CookieOptions) {
+        set(name: string, value: string, options: CookieOptions) {
           cookieStore.set(name, value, options);
         },
-        remove(name: string, options?: CookieOptions) {
-          if (typeof (cookieStore as any).delete === 'function') {
-            (cookieStore as any).delete(name);
-          } else {
-            cookieStore.set(name, '', { maxAge: 0, ...(options as any) });
-          }
+        remove(name: string) {
+          cookieStore.delete(name);
         },
       },
     }
@@ -43,6 +39,10 @@ const createSupabaseServerComponentClient = async () => {
  * Página para editar un producto específico.
  * Carga los datos del producto desde el servidor y los pasa al formulario.
  */
+import { getCategories } from "@/lib/queries"; // <-- Importar getCategories
+
+// ... createSupabaseServerComponentClient ...
+
 export default async function EditProductPage({ params: paramsPromise }: EditProductPageProps) {
   const params = await paramsPromise;
   
@@ -57,6 +57,8 @@ export default async function EditProductPage({ params: paramsPromise }: EditPro
     notFound();
   }
 
+  const categories = await getCategories(); // <-- Obtener categorías
+
   // Hacemos un "bind" del ID del producto a la server action `updateProduct`
   const updateProductWithId = updateProduct.bind(null, product.id);
 
@@ -67,6 +69,7 @@ export default async function EditProductPage({ params: paramsPromise }: EditPro
         <ProductForm
           action={updateProductWithId}
           initialData={product as Product}
+          categories={categories} // <-- Pasar categorías al ProductForm
         />
       </div>
     </div>

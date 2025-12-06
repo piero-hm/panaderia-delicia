@@ -18,15 +18,11 @@ const createSupabaseServerComponentClient = async () => {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options?: CookieOptions) {
+        set(name: string, value: string, options: CookieOptions) {
           cookieStore.set(name, value, options);
         },
-        remove(name: string, options?: CookieOptions) {
-          if (typeof (cookieStore as any).delete === 'function') {
-            (cookieStore as any).delete(name);
-          } else {
-            cookieStore.set(name, '', { maxAge: 0, ...(options as any) });
-          }
+        remove(name: string) {
+          cookieStore.delete(name);
         },
       },
     }

@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -107,7 +106,17 @@ export default function CartPage() {
               <div className="space-y-6">
                 {state.items.map(item => (
                   <motion.div variants={itemVariants} key={item.id} className="flex items-center gap-6 bg-white p-4 rounded-xl shadow-md border border-gray-100">
-                    <Image src={item.product.image_src} alt={item.product.name} width={100} height={100} className="rounded-lg object-cover" />
+                    <Image
+                      src={
+                        (typeof item.product.image_src === 'string' && item.product.image_src)
+                          ? item.product.image_src
+                          : '/images/producto-placeholder-default.jpg'
+                      }
+                      alt={item.product.name}
+                      width={100}
+                      height={100}
+                      className="rounded-lg object-cover"
+                    />
                     <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                       <div className="md:col-span-1">
                         <h3 className="font-semibold text-lg text-gray-800">{item.product.name}</h3>
@@ -145,4 +154,3 @@ export default function CartPage() {
     </div>
   );
 }
-

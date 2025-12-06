@@ -4,6 +4,7 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { v4 as uuidv4 } from 'uuid'; // Para generar nombres de archivo únicos
 
 /**
  * Crea un cliente de Supabase para usar en acciones del servidor.
@@ -21,19 +22,51 @@ export async function createSupabaseServerActionClient() {
         get(name: string) {
           return cookieStore.get(name)?.value
         },
-        set(name: string, value: string, options?: CookieOptions) {
+        set(name: string, value: string, options: CookieOptions) {
           cookieStore.set(name, value, options)
         },
-        remove(name: string, options?: CookieOptions) {
-          if (typeof (cookieStore as any).delete === 'function') {
-            ;(cookieStore as any).delete(name)
-          } else {
-            cookieStore.set(name, '', { maxAge: 0, ...(options as any) })
-          }
+        remove(name: string) {
+          cookieStore.delete(name);
         },
       },
     }
   )
+}
+
+/**
+ * Sube una imagen a Supabase Storage y devuelve su URL pública.
+ * @param file - El archivo de imagen a subir.
+ * @param bucketName - El nombre del bucket de Supabase Storage.
+ * @returns La URL pública de la imagen o null si hay un error.
+ */
+async function uploadImageToSupabase(file: File, bucketName: string): Promise<string | null> {
+  const supabase = await createSupabaseServerActionClient();
+  const fileExtension = file.name.split('.').pop();
+  const fileName = `${uuidv4()}.${fileExtension}`; // Nombre de archivo único
+  const filePath = `product_images/${fileName}`; // Ruta dentro del bucket
+
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false, // No sobrescribir si ya existe
+    });
+
+  if (error) {
+    console.error('Error uploading image to Supabase Storage:', error);
+    return null;
+  }
+
+  // Obtener la URL pública
+  const { data: publicUrlData } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(filePath);
+
+  if (publicUrlData) {
+    return publicUrlData.publicUrl;
+  }
+
+  return null;
 }
 
 /**
@@ -44,13 +77,24 @@ export async function createSupabaseServerActionClient() {
 export async function createProduct(_prevState: unknown, formData: FormData) {
   const supabase = await createSupabaseServerActionClient();
   
+  const imageFile = formData.get("image") as File;
+  let image_src = "/images/producto-placeholder-default.jpg"; // Default placeholder
+
+  if (imageFile && imageFile.size > 0) {
+    const uploadedImageUrl = await uploadImageToSupabase(imageFile, 'product-images'); // Usar el bucket 'product-images'
+    if (uploadedImageUrl) {
+      image_src = uploadedImageUrl;
+    }
+  }
+
   const rawFormData = {
     name: formData.get("name") as string,
     description: formData.get("description") as string,
     price: parseFloat(formData.get("price") as string),
     stock: parseInt(formData.get("stock") as string, 10),
     slug: (formData.get("name") as string).toLowerCase().replace(/\s+/g, '-').slice(0, 50),
-    image_src: "/images/producto-placeholder-default.jpg", // Placeholder
+    category_id: formData.get("categoryId") as string,
+    image_src: image_src,
     image_alt: `Imagen de ${formData.get("name") as string}`,
   };
 
@@ -62,6 +106,7 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
   }
 
   revalidatePath("/admin/products");
+  revalidatePath("/productos"); // <-- Añadido para la página pública
   return { message: "Éxito: Producto creado." };
 }
 
@@ -74,13 +119,29 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
 export async function updateProduct(id: string, _prevState: unknown, formData: FormData) {
   const supabase = await createSupabaseServerActionClient();
 
-  const rawFormData = {
+  const imageFile = formData.get("image") as File;
+  let image_src: string | undefined; // Puede ser undefined si no se actualiza
+
+  if (imageFile && imageFile.size > 0) {
+    const uploadedImageUrl = await uploadImageToSupabase(imageFile, 'product-images');
+    if (uploadedImageUrl) {
+      image_src = uploadedImageUrl;
+    }
+  }
+
+  const rawFormData: { [key: string]: any } = {
     name: formData.get("name") as string,
     description: formData.get("description") as string,
     price: parseFloat(formData.get("price") as string),
     stock: parseInt(formData.get("stock") as string, 10),
     slug: (formData.get("name") as string).toLowerCase().replace(/\s+/g, '-').slice(0, 50),
+    category_id: formData.get("categoryId") as string,
   };
+
+  if (image_src) {
+    rawFormData.image_src = image_src;
+    rawFormData.image_alt = `Imagen de ${formData.get("name") as string}`;
+  }
 
   const { error } = await supabase
     .from("products")
@@ -94,6 +155,8 @@ export async function updateProduct(id: string, _prevState: unknown, formData: F
 
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/edit/${id}`);
+  revalidatePath("/productos"); // <-- Añadido
+  revalidatePath(`/productos/${rawFormData.slug}`); // <-- Añadido para la página de detalle
   return { message: "Éxito: Producto actualizado." };
 }
 

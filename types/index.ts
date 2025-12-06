@@ -14,12 +14,15 @@ export interface Product {
   id: string; // UUID
   name: string;
   description: string | null;
-  ingredients?: string[]; // Added ingredients
   price: number;
   discount_price: number | null;
   image_src: string;
   image_alt: string | null;
   category_id: string | null; // UUID
+  categories?: { // Añadido para el join con categorías
+    name: string;
+    slug: string;
+  };
   stock: number;
   slug: string;
   isFeatured?: boolean; // Add isFeatured property
