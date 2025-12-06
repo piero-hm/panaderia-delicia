@@ -61,7 +61,7 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <div className="flex flex-col min-h-screen">
-              {!['/carrito', '/auth/signin', '/auth/signup'].includes(pathname) && (
+              {!['/carrito', '/auth/signin', '/auth/signup'].includes(pathname) && !pathname.startsWith('/admin') && (
                 <Header
                   brand="Delicia Panadería"
                   links={navLinks.map(link => ({
