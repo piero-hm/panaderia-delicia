@@ -65,19 +65,7 @@ const ProductDetailClient: React.FC<ProductDetailClientProps> = ({ product }) =>
             {/* Description */}
             <p className="leading-relaxed text-gray-600 mb-5 text-base">{product.description}</p> {/* Ensured text-base */}
 
-            {/* Ingredients */}
-            {product.ingredients && product.ingredients.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-gray-800 text-lg font-semibold mb-3">Ingredientes</h3> {/* Adjusted margin */}
-                <div className="flex flex-wrap gap-2">
-                  {product.ingredients.map((ingredient, index) => (
-                    <span key={index} className="bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1 rounded-full"> {/* Adjusted padding */}
-                      {ingredient}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+            
 
             <div className="flex flex-col sm:flex-row sm:items-center pt-5 border-t-2 border-gray-100 mt-5">
               {/* Quantity Selector */}
